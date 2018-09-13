@@ -37,7 +37,7 @@ class SQLDirectSQLiteConnection(SQLDirectConnection):
         else:
             self.connection.isolation_level = ""
 
-    def execute(self, sql, *args):
+    def execute(self, sql, *args, getlastid=False):
         sql = self._statement(sql)
         #todo: count the number of semicolon to detect a multiple statement is wrong, but simple!
         #todo: should detect all the SQL keywords like SELECT, INSERT, CREATE, ALTER etc and count them
@@ -46,7 +46,7 @@ class SQLDirectSQLiteConnection(SQLDirectConnection):
                 raise SQLDirectError("Cannot pass parameter to multiple SQL statement for SQLite database")
             return self._execute_script(sql)
         else:
-            return super().execute(sql, *args)
+            return super().execute(sql, *args, getlastid=getlastid)
 
     def _execute_script(self, sql):
         sql = self._statement(sql)
@@ -91,3 +91,10 @@ class SQLDirectSQLiteConnection(SQLDirectConnection):
             raise SQLDirectError("Cannot execute query") from sqlex
         else:
             raise ex
+
+    def get_last_id(self, cursor):
+        try:
+            id = cursor.lastrowid
+            return id
+        except sqlite3.Error as sqlex:
+            raise SQLDirectError("Error during last row id retrival, using cursor.lastrowid") from sqlex

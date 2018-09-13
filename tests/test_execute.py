@@ -87,6 +87,35 @@ class TestExecute(unittest.TestCase):
 
         self.assertTrue('test data', data_field)
 
+    def test_auto_increment(self):
+        self.smrt_conn.execute("CREATE TABLE test (id serial PRIMARY KEY, num integer, data varchar);")
+        self.smrt_conn.execute("INSERT INTO test (num, data) VALUES ({par}, {par});", 100, "abc'def")
+        id_fileld = self.smrt_conn.fetchone("SELECT id FROM test WHERE num=100;", lambda r: r['id'])
+        self.assertTrue(1, id_fileld)
+
+
+    def test_auto_increment_2(self):
+        self.smrt_conn.execute("CREATE TABLE test (id serial PRIMARY KEY, num integer, data varchar);")
+        self.smrt_conn.execute("INSERT INTO test (num, data) VALUES ({par}, {par});", 100, "abc'def")
+        self.smrt_conn.execute("INSERT INTO test (num, data) VALUES ({par}, {par});", 200, "abc'def")
+        id_fileld = self.smrt_conn.fetchone("SELECT id FROM test WHERE num=200;", lambda r: r['id'])
+        self.assertTrue(2, id_fileld)
+
+    def test_get_last_id(self):
+        self.smrt_conn.execute("CREATE TABLE test (id serial PRIMARY KEY, num integer, data varchar);")
+        last_id = self.smrt_conn.execute("INSERT INTO test (num, data) VALUES ({par}, {par});", 100, "abc'def", getlastid=True)
+        id_fileld = self.smrt_conn.fetchone("SELECT id FROM test WHERE num=100;", lambda r: r['id'])
+        self.assertTrue(1, id_fileld)
+        self.assertTrue(1, last_id)
+
+    def test_get_last_id_2(self):
+        self.smrt_conn.execute("CREATE TABLE test (id serial PRIMARY KEY, num integer, data varchar);")
+        self.smrt_conn.execute("INSERT INTO test (num, data) VALUES ({par}, {par});", 100, "abc'def")
+        last_id =self.smrt_conn.execute("INSERT INTO test (num, data) VALUES ({par}, {par});", 200, "abc'def")
+        id_fileld = self.smrt_conn.fetchone("SELECT id FROM test WHERE num=200;", lambda r: r['id'])
+        self.assertTrue(2, id_fileld)
+        self.assertTrue(2, last_id)
+
 
     @classmethod
     def setUpClass(cls):

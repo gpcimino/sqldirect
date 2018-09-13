@@ -92,19 +92,23 @@ class SQLDirectConnection(object):
             if cursor:
                 cursor.close()
 
-    def execute(self, sql, *args):
+    def execute(self, sql, *args, getlastid=False):
+        id = None
         sql = self._statement(sql)
         try:
             log.debug("Open cursor")
             cursor = self.cursor()
             log.info("Execute SQL: %s . With args: %s", sql, args)
             cursor.execute(str(sql), args)
+            if getlastid:
+                id = self.get_last_id(cursor)
         except Exception as ex:
             self.handle_exception(ex)
         finally:
             log.debug("Close cursor")
             if cursor:
                 cursor.close()
+        return id
 
     def db_type(self):
         pass
@@ -119,4 +123,7 @@ class SQLDirectConnection(object):
         pass
 
     def handle_exception(self, ex):
+        pass
+
+    def get_last_id(self, cursor):
         pass

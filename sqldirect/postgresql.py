@@ -67,6 +67,14 @@ class SQLDirectPostgreSQLConnection(SQLDirectConnection):
         else:
             raise ex
 
+    def get_last_id(self, cursor):
+        try:
+            cursor.execute('SELECT LASTVAL()')
+            id = cursor.fetchone()['lastval']
+            return id
+        except psycopg2.Error as sqlex:
+            raise SQLDirectError("Error during last row id retrival, using RETURNING id in SQL statement") from sqlex
+
 
 
 
