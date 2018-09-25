@@ -1,6 +1,6 @@
 import logging
 
-from sqldirect.smart_connection_factory import ConnectionFactory
+from sqldirect.connection_factory import ConnectionFactory
 from sqldirect.errors import SQLDirectError
 from sqldirect.types import record_factory
 
