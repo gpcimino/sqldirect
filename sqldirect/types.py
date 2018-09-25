@@ -48,13 +48,17 @@ class Dictionary(Type):
 
 
 class Object(Type):
-    def __init__(self, type_):
+    def __init__(self, type_, extra_fields=None):
         self._type = type_
+        self._extra_fields = extra_fields
 
     def typename(self):
         return self._type.__name__
 
     def map(self, dbrecord):
+        if self._extra_fields is not None:
+            dbrecord = {**dbrecord, **self._extra_fields}
+
         signature = getfullargspec(self._type.__init__)
         if len(signature.args) == 2:
             return self._create1(dbrecord, signature.args)
