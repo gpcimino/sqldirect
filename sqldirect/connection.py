@@ -58,7 +58,8 @@ class SQLDirectConnection(object):
         self.connection.rollback()
 
     def fetchone(self, sql, types, *args, merge=None, switch=None):
-        smart_record = record_factory(types, merge, switch)
+        #smart_record = record_factory(types, merge, switch)
+        smart_record = types
         sql = self._statement(sql)
         try:
             log.debug("Open cursor")
@@ -77,7 +78,8 @@ class SQLDirectConnection(object):
                 cursor.close()
 
     def fetchall(self, sql, types, *args, merge=None, switch=None):
-        smart_record = record_factory(types, merge, switch)
+        #smart_record = record_factory(types, merge, switch)
+        smart_record = types
         sql = self._statement(sql)
         try:
             log.debug("Open cursor")
