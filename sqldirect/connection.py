@@ -42,6 +42,12 @@ class SQLDirectConnection(object):
     def _statement_factory(self, statement):
         pass
 
+    def is_cached(self):
+        return False
+
+    def no_cache(self):
+        return self
+
     def close(self):
         self.connection.close()
 
