@@ -53,7 +53,7 @@ class SQLDirectSQLiteConnection(SQLDirectConnection):
         try:
             log.debug("Open cursor")
             cursor = self.cursor()
-            log.info("Execute SQL: %s . With args: %s", sql)
+            log.info("Execute SQL: %s", sql)
             cursor.executescript(str(sql))
         except Exception as ex:
             raise ex

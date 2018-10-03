@@ -66,6 +66,7 @@ class SQLDirectConnection(object):
             cursor = self.cursor()
             log.info("Execute SQL: %s . With args: %s", sql, args)
             cursor.execute(str(sql), args)
+            #[x for x in cursor.execute("PRAGMA database_list").fetchall()[0]]
             record = cursor.fetchone()
             if record is None:
                 return None

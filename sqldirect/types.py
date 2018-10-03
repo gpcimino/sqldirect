@@ -40,11 +40,18 @@ class Type(object):
         pass
 
 class Dictionary(Type):
-    def __init__(self, map=None):
-        self._map = map
+    def __init__(self, key_map=None):
+        self._key_map = key_map
 
     def map(self, dbrecord):
-        return dict(dbrecord)
+        if self._key_map is None:
+            return dict(dbrecord)
+        else:
+            #rename keys
+            d = dict(dbrecord)
+            for k in self._key_map:
+                d[self._key_map[k]] = d.pop(k)
+            return d
 
 
 class Object(Type):
@@ -72,8 +79,10 @@ class Object(Type):
             return self._create5(dbrecord, signature.args)
         elif len(signature.args) == 7:
             return self._create6(dbrecord, signature.args)
+        elif len(signature.args) == 8:
+            return self._create7(dbrecord, signature.args)
         else:
-            raise SQLDirectError("Cannot create object with more than 7 args in ctor")
+            raise SQLDirectError("Cannot create object with more than 8 args in ctor")
 
     def _create1(self, dbrecord, ctor_args):
         return self._type(dbrecord[ctor_args[1]])
