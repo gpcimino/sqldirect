@@ -15,7 +15,15 @@ def create_connection(connection):
 
 class SQLLiteStatement(Statement):
     def __init__(self, statement):
-        super().__init__(statement, {'par': '?', 'return_id': ""})
+        super().__init__(
+            statement,
+            {
+                'par': '?',
+                'return_id': "",
+                'autoincrement' : "INTEGER PRIMARY KEY AUTOINCREMENT"
+
+            }
+        )
 
 
 class SQLDirectSQLiteConnection(SQLDirectConnection):
@@ -24,6 +32,8 @@ class SQLDirectSQLiteConnection(SQLDirectConnection):
             sqlite3.connect(connection) if isinstance(connection, str) else connection
         )
         self.connection.row_factory = sqlite3.Row
+        if isinstance(connection, str):
+            log.debug("Open connection to database")
 
     def _statement_factory(self, statement):
         return SQLLiteStatement(statement)
@@ -49,6 +59,7 @@ class SQLDirectSQLiteConnection(SQLDirectConnection):
             return super().execute(sql, *args, getlastid=getlastid)
 
     def _execute_script(self, sql):
+        cursor = None
         sql = self._statement(sql)
         try:
             log.debug("Open cursor")

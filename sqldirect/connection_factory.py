@@ -2,6 +2,8 @@ import logging
 
 from sqldirect.errors import SQLDirectError
 
+log = logging.getLogger("sqldirect")
+
 class ConnectionFactory(object):
 
     def __init__(self, connection, hint=None):

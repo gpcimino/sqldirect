@@ -9,7 +9,14 @@ log = logging.getLogger("sqldirect")
 
 class PostgreSQLStatement(Statement):
     def __init__(self, statement):
-        super().__init__(statement, {'par': '%s', 'return_id': "RETURNING id"})
+        super().__init__(
+            statement,
+            {
+                'par': '%s',
+                'return_id': "RETURNING id",
+                'autoincrement': "SERIAL PRIMARY KEY NOT NULL"
+            }
+        )
 
 
 class SQLDirectPostgreSQLConnection(SQLDirectConnection):
@@ -17,6 +24,8 @@ class SQLDirectPostgreSQLConnection(SQLDirectConnection):
         super().__init__(
             psycopg2.connect(conn, cursor_factory=RealDictCursor) if isinstance(conn, str) else conn
         )
+        if isinstance(conn, str):
+            log.debug("Open connection to database")
         self._has_dict_cursor = isinstance(self.connection.cursor_factory, RealDictCursor)
 
     def db_type(self):
