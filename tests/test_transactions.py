@@ -5,6 +5,7 @@ import logging
 
 from sqldirect.connection import SQLDirectConnection
 from sqldirect.utils import find_connection
+from sqldirect.types import Function
 
 
 
@@ -33,7 +34,7 @@ class TestAutoCommmit(unittest.TestCase):
         self.smrt_conn.execute("DROP TABLE IF EXISTS test")
         self.smrt_conn.execute("CREATE TABLE test (id serial PRIMARY KEY, num integer, data varchar);")
         self.smrt_conn.execute("INSERT INTO test (num, data) VALUES ({par}, {par});", 100, "abc'def")
-        data_field = self.smrt_conn.fetchone("SELECT data FROM test WHERE num=100;",lambda r: r['data'])
+        data_field = self.smrt_conn.fetchone("SELECT data FROM test WHERE num=100;", Function(lambda r: r['data']))
         self.assertTrue("abc'def", data_field)
         self.smrt_conn.execute("DROP TABLE test")
 

@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from sqldirect.connection import SQLDirectConnection
 from sqldirect.utils import find_connection
 
+from sqldirect.types import Function, Dictionary, Object
 
 
 class TestFetchOne(unittest.TestCase):
@@ -19,7 +20,7 @@ class TestFetchOne(unittest.TestCase):
 
 
     def test_dictionary(self):
-        dictionary = self.smrt_conn.fetchone("select 'a' as a, 1 as b", dict)
+        dictionary = self.smrt_conn.fetchone("select 'a' as a, 1 as b", Dictionary())
         self.assertEqual({'a': 'a', 'b': 1}, dictionary)
 
     def test_multiple_dictionary(self):
@@ -31,14 +32,14 @@ class TestFetchOne(unittest.TestCase):
         self.assertEqual({'a': 'a', 'b': 1, 'nested': {'a': 'a', 'b': 1}}, dictionary)
 
     def test_lambda(self):
-        eleven = self.smrt_conn.fetchone("select 'a' as a, 1 as b", lambda r: r['b'] + 10)
+        eleven = self.smrt_conn.fetchone("select 'a' as a, 1 as b", Function(lambda r: r['b'] + 10))
         self.assertEqual(11, eleven)
 
     def test_func(self):
         def mapper(record):
             return record['a'].upper()
 
-        A = self.smrt_conn.fetchone("select 'a' as a, 1 as b", mapper)
+        A = self.smrt_conn.fetchone("select 'a' as a, 1 as b", Function(mapper))
         self.assertEqual('A', A)
 
     def test_map_to_obj(self):
@@ -47,14 +48,14 @@ class TestFetchOne(unittest.TestCase):
                 self.member_a = a
                 self.member_b = b
 
-        fake = self.smrt_conn.fetchone("select 'a' as a, 1 as b", Fake)
+        fake = self.smrt_conn.fetchone("select 'a' as a, 1 as b", Object(Fake))
         self.assertEqual(fake.member_a, 'a')
         self.assertEqual(fake.member_b, 1)
 
     def test_args(self):
         dictionary = self.smrt_conn.fetchone(
             "select * from (select 1 as id union all select 2 as id union all select 3 as id) as X where id = {par}",
-            dict,
+            Dictionary(),
             2
         )
         self.assertEqual({'id': 2}, dictionary)
@@ -66,7 +67,7 @@ class TestFetchOne(unittest.TestCase):
         #note this is a feature of postgresql, see: https://www.postgresql.org/docs/current/static/sql-syntax-lexical.html#SQL-SYNTAX-IDENTIFIERS
         dictionary = self.smrt_conn.fetchone(
             'select 1 as "DATA", 2 as Number',
-            dict
+            Dictionary()
         )
         self.assertEqual({'DATA': 1, 'number': 2}, dictionary)
 

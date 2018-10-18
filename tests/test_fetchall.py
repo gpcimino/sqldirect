@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 from sqldirect.connection import SQLDirectConnection
 from sqldirect.utils import find_connection
-
+from sqldirect.types import Function, Dictionary, Object
 
 class TestFetchAll(unittest.TestCase):
     def setUp(self):
@@ -25,7 +25,7 @@ class TestFetchAll(unittest.TestCase):
     def test_dictionary(self):
         resultset = self.smrt_conn.fetchall(
             "SELECT 1 as id, 'a' as data UNION ALL SELECT 2 as id, 'b' as data UNION ALL SELECT 3 as id, 'c' as data",
-            dict
+            Dictionary()
         )
         self.assertEqual({'id': 1, 'data': 'a'}, resultset[0])
         self.assertEqual({'id': 2, 'data': 'b'}, resultset[1])
@@ -48,7 +48,7 @@ class TestFetchAll(unittest.TestCase):
     def test_lambda(self):
         resultset = self.smrt_conn.fetchall(
             "SELECT 1 as id, 'a' as data UNION ALL SELECT 2 as id, 'b' as data UNION ALL SELECT 3 as id, 'c' as data",
-            lambda r: r['id'] + 10
+            Function(lambda r: r['id'] + 10)
         )
         self.assertEqual(11, resultset[0])
         self.assertEqual(12, resultset[1])
@@ -60,7 +60,7 @@ class TestFetchAll(unittest.TestCase):
 
         resultset = self.smrt_conn.fetchall(
             "SELECT 1 as id, 'a' as data UNION ALL SELECT 2 as id, 'b' as data UNION ALL SELECT 3 as id, 'c' as data",
-            mapper
+            Function(mapper)
         )
         self.assertEqual("A", resultset[0])
         self.assertEqual("B", resultset[1])
@@ -74,7 +74,7 @@ class TestFetchAll(unittest.TestCase):
 
         resultset = self.smrt_conn.fetchall(
             "SELECT 1 as id, 'a' as data UNION ALL SELECT 2 as id, 'b' as data UNION ALL SELECT 3 as id, 'c' as data",
-            Fake
+            Object(Fake)
         )
         self.assertEqual(1, resultset[0]._id)
         self.assertEqual(2, resultset[1]._id)
@@ -83,7 +83,7 @@ class TestFetchAll(unittest.TestCase):
     def test_args(self):
         resultset = self.smrt_conn.fetchall(
             "select * from (select 1 as id union all select 2 union all select 3) as X where id > {par}",
-            dict,
+            Dictionary(),
             1
         )
         self.assertEqual({'id': 2}, resultset[0])

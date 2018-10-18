@@ -3,7 +3,7 @@ import sqlite3
 
 from sqldirect.connection import SQLDirectConnection, Statement
 from sqldirect.errors import SQLDirectError
-
+from sqldirect.types import Function
 
 log = logging.getLogger("sqldirect")
 
@@ -77,12 +77,12 @@ class SQLDirectSQLiteConnection(SQLDirectConnection):
         if name_filter is None:
             return self.fetchall(
                 "SELECT name FROM sqlite_master WHERE type='table' AND name <> 'sqlite_sequence' ORDER BY name;",
-                lambda r: r['name'],
+                Function(lambda r: r['name']),
             )
         else:
             return self.fetchall(
                 "SELECT name FROM sqlite_master WHERE type='table' AND name LIKE {par} AND name <> 'sqlite_sequence' ORDER BY name;",
-                lambda r: r['name'],
+                Function(lambda r: r['name']),
                 name_filter
             )
 

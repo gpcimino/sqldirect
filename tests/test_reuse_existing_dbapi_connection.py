@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 from sqldirect.connection import SQLDirectConnection
 from sqldirect.utils import find_connection
-
+from sqldirect.types import Dictionary
 
 class TestReuseExistingDBbAPIConnection(unittest.TestCase):
     def setUp(self):
@@ -24,7 +24,7 @@ class TestReuseExistingDBbAPIConnection(unittest.TestCase):
     def test_dictionary(self):
         dictionary = self.smrt_conn.fetchone(
             "select 'a' as a, 1 as b",
-            dict
+            Dictionary()
         )
         self.assertEqual({'a': 'a', 'b': 1}, dictionary)
 

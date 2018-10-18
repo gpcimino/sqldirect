@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 
 from sqldirect.connection import SQLDirectConnection
 from sqldirect.utils import find_connection
+from sqldirect.types import Function
 
 
 class TestExecute(unittest.TestCase):
@@ -11,7 +12,7 @@ class TestExecute(unittest.TestCase):
         self.conn = find_connection()
         self.smrt_conn = SQLDirectConnection.create(self.conn)
         self.hint = self.smrt_conn.db_type()
-        print("Use {}".format(self.hint))
+        #print("Use {}".format(self.hint))
 
 
     def tearDown(self):
@@ -36,7 +37,7 @@ class TestExecute(unittest.TestCase):
 
         data_field = self.smrt_conn.fetchone(
             "SELECT data FROM test WHERE num=100;",
-            lambda r: r['data']
+            Function(lambda r: r['data'])
         )
 
         self.assertTrue("abc'def", data_field)
@@ -82,7 +83,7 @@ class TestExecute(unittest.TestCase):
 
         data_field = self.smrt_conn.fetchone(
             "SELECT data FROM test WHERE num=100;",
-            lambda r: r['data']
+            Function(lambda r: r['data'])
         )
 
         self.assertTrue('test data', data_field)
@@ -90,7 +91,7 @@ class TestExecute(unittest.TestCase):
     def test_auto_increment(self):
         self.smrt_conn.execute("CREATE TABLE test (id serial PRIMARY KEY, num integer, data varchar);")
         self.smrt_conn.execute("INSERT INTO test (num, data) VALUES ({par}, {par});", 100, "abc'def")
-        id_fileld = self.smrt_conn.fetchone("SELECT id FROM test WHERE num=100;", lambda r: r['id'])
+        id_fileld = self.smrt_conn.fetchone("SELECT id FROM test WHERE num=100;", Function(lambda r: r['id']))
         self.assertTrue(1, id_fileld)
 
 
@@ -98,13 +99,13 @@ class TestExecute(unittest.TestCase):
         self.smrt_conn.execute("CREATE TABLE test (id serial PRIMARY KEY, num integer, data varchar);")
         self.smrt_conn.execute("INSERT INTO test (num, data) VALUES ({par}, {par});", 100, "abc'def")
         self.smrt_conn.execute("INSERT INTO test (num, data) VALUES ({par}, {par});", 200, "abc'def")
-        id_fileld = self.smrt_conn.fetchone("SELECT id FROM test WHERE num=200;", lambda r: r['id'])
+        id_fileld = self.smrt_conn.fetchone("SELECT id FROM test WHERE num=200;", Function(lambda r: r['id']))
         self.assertTrue(2, id_fileld)
 
     def test_get_last_id(self):
         self.smrt_conn.execute("CREATE TABLE test (id serial PRIMARY KEY, num integer, data varchar);")
         last_id = self.smrt_conn.execute("INSERT INTO test (num, data) VALUES ({par}, {par});", 100, "abc'def", getlastid=True)
-        id_fileld = self.smrt_conn.fetchone("SELECT id FROM test WHERE num=100;", lambda r: r['id'])
+        id_fileld = self.smrt_conn.fetchone("SELECT id FROM test WHERE num=100;", Function(lambda r: r['id']))
         self.assertTrue(1, id_fileld)
         self.assertTrue(1, last_id)
 
@@ -112,7 +113,7 @@ class TestExecute(unittest.TestCase):
         self.smrt_conn.execute("CREATE TABLE test (id serial PRIMARY KEY, num integer, data varchar);")
         self.smrt_conn.execute("INSERT INTO test (num, data) VALUES ({par}, {par});", 100, "abc'def")
         last_id =self.smrt_conn.execute("INSERT INTO test (num, data) VALUES ({par}, {par});", 200, "abc'def")
-        id_fileld = self.smrt_conn.fetchone("SELECT id FROM test WHERE num=200;", lambda r: r['id'])
+        id_fileld = self.smrt_conn.fetchone("SELECT id FROM test WHERE num=200;", Function(lambda r: r['id']))
         self.assertTrue(2, id_fileld)
         self.assertTrue(2, last_id)
 
