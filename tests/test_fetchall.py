@@ -113,7 +113,8 @@ class TestFetchAll(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        load_dotenv(dotenv_path=Path('..') / 'db.env')
+        #look for .env files in the project (../.env)
+        load_dotenv()
 
     @classmethod
     def tearDownClass(cls):
