@@ -4,10 +4,10 @@ import logging
 import sys
 from dotenv import load_dotenv
 
-from sqldirect import SQLiteConnection
+from sqldirect import SQLiteConnection as DbConnection
+from sqldirect import Dictionary
 
-
-class TestFetchOne(unittest.TestCase):
+class TestFetchMany(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         # specify exact path to avoid use wrong .env in some other folder
@@ -15,11 +15,11 @@ class TestFetchOne(unittest.TestCase):
 
 
     def setUp(self):
-        self.conn = SQLiteConnection(os.getenv("CONNECTION_STRING"))
+        self.conn = DbConnection(os.getenv("CONNECTION_STRING"))
 
     def test_dict(self):
-        dictionary = self.conn.fetchone("select 'a' as a, 1 as b")
-        self.assertEqual({'a': 'a', 'b': 1}, dictionary)
+        dictionary = self.conn.fetchone("select 'a' as a, 1 as b", Dictionary({'a': 'A', 'b': 'B'}))
+        self.assertEqual({'A': 'a', 'B': 1}, dictionary)
 
 
     def tearDown(self):

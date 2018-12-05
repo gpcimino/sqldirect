@@ -1,5 +1,27 @@
-test:
-	python -m unittest discover -s ./tests/
+VENV_NAME=.venv
+VENV_ACTIVATE=$(VENV_NAME)/bin/activate
+PYTHON=${VENV_NAME}/bin/python3
+SYSPYTHON=/usr/bin/python3
+PROJECT=sqldirect
+
+venv: requirements.txt
+	rm -rf ${VENV_NAME}; \
+	${SYSPYTHON} -m venv ${VENV_NAME}; \
+	. ${VENV_ACTIVATE} ;\
+	pip install --upgrade pip; \
+	pip install -Ur requirements.txt ;\
+	pip install pylama; \
+	pip install coverage;
+#./${PROJECT}/*.py ./test/*.py
+test: 
+	. ${VENV_ACTIVATE}; \
+	coverage run --omit=.venv/* -m unittest discover -s tests/
+	coverage report
+
+quality: ${PROJECT}/*.py
+	pylama ./sqldirect/
+
+clean: clean-pyc clean-build
 
 clean-pyc:
 	find . -name '*.pyc' -exec rm --force {} +
@@ -7,26 +29,16 @@ clean-pyc:
 	#name '*~' -exec rm --force  {}
 
 clean-build:
-	rm --force --recursive build/
-	rm --force --recursive dist/
-	rm --force --recursive *.egg-info
+	rm -Rf build/
+	rm -Rf dist/
+	rm -Rf *.egg-info
 
-sdist:
+sdist:  ${PROJECT}/*.py
 	python setup.py sdist
 
-bdist:
+bdist:  ${PROJECT}/*.py
 	python setup.py bdist_wheel --universal
 
-postgres:
-	export SQLDIRECT_CONN_STR="postgresql://postgres:password@localhost/sqldirect"
-	docker run -d -p 5432:5432 --name postegresql -e POSTGRES_PASSWORD=password -e POSTGRES_DB=sqldirect --rm postgres:10.5
 
-rebuild-venv:
-	rm -rf ./venv/
-	python36 -m venv ./venv/
-	source ./venv/bin/activate
-	pip install -r requirements.txt
 
-quality:
-	pylama ./sqldirect/
 
