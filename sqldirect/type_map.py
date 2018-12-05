@@ -63,7 +63,14 @@ class Type(object):
 
     def map(self, dbrecord):
         if self._extra_fields is not None:
-            dbrecord = {**dbrecord, **self._extra_fields}
+            try:
+                # this way of merge dict is valid starting from py3.5
+                dbrecord = {**dbrecord, **self._extra_fields}
+            except:
+                tmp = dbrecord.copy()
+                tmp.update(self._extra_fields)
+                dbrecord = tmp
+
 
         signature = getfullargspec(self._type.__init__)
         if len(signature.args) == 2:
