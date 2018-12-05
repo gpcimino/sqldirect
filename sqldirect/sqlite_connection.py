@@ -42,3 +42,27 @@ class SQLiteConnection(Connection):
             log.debug("Close cursor")
             if cursor:
                 cursor.close()
+
+    def fetchall(self, sql, mapper=Dictionary(), args=[]):
+        cursor = None
+        sql = SQLLiteStatement(sql)
+        try:
+            log.debug("Open cursor")
+            cursor = self.cursor()
+            log.info("Execute SQL: %s . With args: %s", sql, args)
+            cursor.execute(str(sql), args)
+            return [mapper.map(r) for r in cursor.fetchall()]
+        except sqlite3.Warning as sqlex:
+            log.warning(str(sqlex))
+            # do not raise sqlex here, it is just a warning, log is enough
+        except sqlite3.Error as sqlex:
+            log.exception(sqlex)
+            raise SQLDirectError(
+                "Cannot execute query %s with args",
+                str(sql),
+                str(args)
+            ) from sqlex
+        finally:
+            log.debug("Close cursor")
+            if cursor:
+                cursor.close()

@@ -4,7 +4,7 @@ import logging
 import sys
 from dotenv import load_dotenv, find_dotenv
 
-from sqldirect import SQLiteConnection
+from sqldirect import SQLiteConnection, Dictionary
 
 
 class TestFetchOne(unittest.TestCase):
@@ -19,6 +19,17 @@ class TestFetchOne(unittest.TestCase):
     def test_dict(self):
         dictionary = self.conn.fetchone("select 'a' as a, 1 as b")
         self.assertEqual({'a': 'a', 'b': 1}, dictionary)
+
+    def test_dict_mapping(self):
+        dictionary = self.conn.fetchone("select 'a' as a, 1 as b", Dictionary({'a': 'A', 'b': 'B'}))
+        self.assertEqual({'A': 'a', 'B': 1}, dictionary)
+        self.assertFalse('a' in dictionary)
+        self.assertFalse('b' in dictionary)
+
+    def test_dict_partial_mapping(self):
+        dictionary = self.conn.fetchone("select 'a' as a, 1 as b", Dictionary({'a': 'A'}))
+        self.assertEqual({'A': 'a', 'b': 1}, dictionary)
+        self.assertFalse('a' in dictionary)
 
 
     def tearDown(self):

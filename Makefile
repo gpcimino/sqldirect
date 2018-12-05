@@ -17,7 +17,7 @@ venv: requirements.txt
 #./${PROJECT}/*.py ./test/*.py
 test: 
 	. ${VENV_ACTIVATE}; \
-	coverage run --omit=.venv/* -m unittest discover -s tests/; \
+	coverage run --omit=.venv/*,tests/*  -m unittest discover -s tests/; \
 	coverage report;
 
 quality:

@@ -18,10 +18,12 @@ class TestFetchMany(unittest.TestCase):
         self.conn = DbConnection(os.getenv("CONNECTION_STRING"))
 
     def test_dict(self):
-        dictionary = self.conn.fetchone("select 'a' as a, 1 as b", Dictionary({'a': 'A', 'b': 'B'}))
-        self.assertEqual({'A': 'a', 'B': 1}, dictionary)
-        self.assertFalse("a" in dictionary)
-        self.assertFalse("b" in dictionary)
+        resultset = self.conn.fetchall(
+            "SELECT 1 as id, 'a' as data UNION ALL SELECT 2 as id, 'b' as data UNION ALL SELECT 3 as id, 'c' as data",
+        )
+        self.assertEqual({'id': 1, 'data': 'a'}, resultset[0])
+        self.assertEqual({'id': 2, 'data': 'b'}, resultset[1])
+        self.assertEqual({'id': 3, 'data': 'c'}, resultset[2])
 
 
     def tearDown(self):

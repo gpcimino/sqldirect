@@ -10,5 +10,6 @@ class Dictionary(object):
             # rename keys using key map
             d = dict(dbrecord)
             for k in self._key_map:
-                d[self._key_map[k]] = d.pop(k)  # why pop?
+                # remove (pop) and add again with the new name
+                d[self._key_map[k]] = d.pop(k)
             return d
