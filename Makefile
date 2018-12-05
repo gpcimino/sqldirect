@@ -27,3 +27,6 @@ rebuild-venv:
 	source ./venv/bin/activate
 	pip install -r requirements.txt
 
+quality:
+	pylama ./sqldirect/
+
