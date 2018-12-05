@@ -34,7 +34,3 @@ class TestFetchMany(unittest.TestCase):
     def tearDownClass(cls):
         pass
 
-#
-# if __name__ == "__main__":
-#     logging.basicConfig(stream=sys.stdout, level=logging.DEBUG, format='%(asctime)s [%(levelname)s] %(message)s')
-#     unittest.main()
