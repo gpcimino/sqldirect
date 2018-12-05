@@ -4,7 +4,9 @@ import logging
 import sys
 from dotenv import load_dotenv, find_dotenv
 
-from sqldirect import SQLiteConnection, Dictionary, Integer, String, Float, Type, Function
+from sqldirect import SQLiteConnection
+from sqldirect import Dictionary, Integer, String
+from sqldirect import Float, Type, Function, Composite, Polymorphic
 
 
 class TestFetchOne(unittest.TestCase):
@@ -88,10 +90,79 @@ class TestFetchOne(unittest.TestCase):
         A = self.conn.fetchone("select 'a' as a, 1 as b", Function(mapper))
         self.assertEqual('A', A)
 
+    def test_composite(self):
+        class Fake1(object):
+            def __init__(self, a):
+                self.member_a = a
+                self.fake2 = None
+
+        class Fake2(object):
+            def __init__(self, b):
+                self.member_b = b
+
+        def rel(f1, f2):
+            f1.fake2 = f2
+            return f1
+
+        c = self.conn.fetchone(
+            "select 'a' as a, 1 as b",
+            Composite([
+                    Type(Fake1),
+                    Type(Fake2),
+                ],
+                relation=rel
+            ),
+
+        )
+        self.assertEqual(c.member_a, 'a')
+        self.assertEqual(c.fake2.member_b, 1)
+
+    def test_composite_type_dict(self):
+        class Fake1(object):
+            def __init__(self, a):
+                self.member_a = a
+                self.dictionary = None
+
+        def rel(f1, d):
+            f1.dictionary = d
+            return f1
+
+        c = self.conn.fetchone(
+            "select 'a' as a, 1 as b",
+            Composite([
+                    Type(Fake1),
+                    Dictionary(),
+                ],
+                relation=rel
+            ),
+        )
+        self.assertEqual(c.member_a, 'a')
+        self.assertEqual(c.dictionary, {'a': 'a', 'b': 1})
+
+    def test_polimorphic_type(self):
+        class Fake1(object):
+            def __init__(self, a):
+                self.member_a = a
+
+        class Fake2(object):
+            def __init__(self, b):
+                self.member_b = b
+
+        t = self.conn.fetchone(
+            "select 'a' as a, 1 as b, 'Fake1' as type_",
+            Polymorphic(
+                types=[
+                    Type(Fake1),
+                    Type(Fake2)
+                ],
+                type_switch='type_'
+            )
+        )
+        self.assertEqual(type(t), Fake1)
+        self.assertEqual(t.member_a, 'a')
 
     def tearDown(self):
         self.conn.close()
-
 
     @classmethod
     def tearDownClass(cls):

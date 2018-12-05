@@ -1,6 +1,5 @@
 from inspect import getfullargspec
 
-
 from sqldirect.errors import SQLDirectError
 
 
@@ -147,3 +146,30 @@ class Function(object):
 
     def map(self, dbrecord):
         return self._func(dbrecord)
+
+
+class Composite(object):
+    def __init__(self, types, relation=None):
+        self._types = types if isinstance(types, list) else [types]
+        if relation is not None:
+            if len(getfullargspec(relation).args) != len(types):
+                raise SQLDirectError(
+                    "Result types are not same number of realtion function arguments" # noqa
+                )
+        self._relation = relation
+
+    def map(self, dbrecord):
+        mapped = [t.map(dbrecord) for t in self._types]
+        if self._relation is not None:
+            return self._relation(*mapped)
+        else:
+            return mapped
+
+
+class Polymorphic(object):
+    def __init__(self, types, type_switch):
+        self._type_switch = type_switch
+        self._objects = {t.typename(): t for t in types}
+
+    def map(self, dbrecord):
+        return self._objects[dbrecord[self._type_switch]].map(dbrecord)

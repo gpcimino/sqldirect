@@ -42,6 +42,7 @@ sdist:  ${PROJECT}/*.py
 bdist:  ${PROJECT}/*.py
 	python setup.py bdist_wheel --universal
 
-
+git-cred-cache:
+	git config --global credential.helper 'cache --timeout=86400'
 
 
