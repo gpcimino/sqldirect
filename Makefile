@@ -11,15 +11,18 @@ venv: requirements.txt
 	pip install --upgrade pip; \
 	pip install -Ur requirements.txt ;\
 	pip install pylama; \
-	pip install coverage;
+	pip install coverage; \
+	pip install -e .;
+
 #./${PROJECT}/*.py ./test/*.py
 test: 
 	. ${VENV_ACTIVATE}; \
-	coverage run --omit=.venv/* -m unittest discover -s tests/
-	coverage report
+	coverage run --omit=.venv/* -m unittest discover -s tests/; \
+	coverage report;
 
-quality: ${PROJECT}/*.py
-	pylama ./sqldirect/
+quality:
+	. ${VENV_ACTIVATE}; \
+	pylama ./sqldirect/;
 
 clean: clean-pyc clean-build
 

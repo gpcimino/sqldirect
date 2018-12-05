@@ -11,7 +11,7 @@ class TestFetchOne(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         # specify exact path to avoid use wrong .env in some other folder
-        load_dotenv("../.env")
+        load_dotenv()
 
 
     def setUp(self):
