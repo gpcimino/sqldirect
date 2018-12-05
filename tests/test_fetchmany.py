@@ -2,7 +2,7 @@ import unittest
 import os
 import logging
 import sys
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 
 from sqldirect import SQLiteConnection as DbConnection
 from sqldirect import Dictionary
@@ -10,8 +10,8 @@ from sqldirect import Dictionary
 class TestFetchMany(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        # specify exact path to avoid use wrong .env in some other folder
-        load_dotenv()
+        # use find_dotenv as argument to make it working on PyCharm and cmd line
+        load_dotenv(find_dotenv())
 
 
     def setUp(self):
@@ -20,6 +20,8 @@ class TestFetchMany(unittest.TestCase):
     def test_dict(self):
         dictionary = self.conn.fetchone("select 'a' as a, 1 as b", Dictionary({'a': 'A', 'b': 'B'}))
         self.assertEqual({'A': 'a', 'B': 1}, dictionary)
+        self.assertFalse("a" in dictionary)
+        self.assertFalse("b" in dictionary)
 
 
     def tearDown(self):

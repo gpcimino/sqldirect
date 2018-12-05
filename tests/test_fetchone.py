@@ -2,7 +2,7 @@ import unittest
 import os
 import logging
 import sys
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 
 from sqldirect import SQLiteConnection
 
@@ -10,9 +10,8 @@ from sqldirect import SQLiteConnection
 class TestFetchOne(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        # specify exact path to avoid use wrong .env in some other folder
-        load_dotenv()
-
+        # use find_dotenv as argument to make it working on PyCharm and cmd line
+        load_dotenv(find_dotenv())
 
     def setUp(self):
         self.conn = SQLiteConnection(os.getenv("CONNECTION_STRING"))
