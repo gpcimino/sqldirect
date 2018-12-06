@@ -63,7 +63,7 @@ class Type(object):
 
     def map(self, dbrecord):
         if self._extra_fields is not None:
-            # when support of py3.4 will be dropped, use the one-line below
+            # when support of py3.4 will be dropped, use the one-line below to merge 2 dict
             # dbrecord = {**dbrecord, **self._extra_fields}
             tmp = dict(dbrecord).copy()
             tmp.update(self._extra_fields)

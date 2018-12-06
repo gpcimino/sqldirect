@@ -12,7 +12,8 @@ venv: requirements.txt
 	pip install -Ur requirements.txt ;\
 	pip install pylama; \
 	pip install coverage; \
-	pip install -e .;
+	pip install -e .; \
+	echo --> . ${VENV_ACTIVATE} <-- to activate the venv
 
 #./${PROJECT}/*.py ./test/*.py
 test: 
@@ -36,10 +37,16 @@ clean-build:
 	rm -Rf dist/
 	rm -Rf *.egg-info
 
+build: bdist
+
 sdist:  ${PROJECT}/*.py
+	. ${VENV_ACTIVATE} ;\
+        pip install wheel; \
 	python setup.py sdist
 
 bdist:  ${PROJECT}/*.py
+	. ${VENV_ACTIVATE} ;\
+	pip install wheel; \
 	python setup.py bdist_wheel --universal
 
 git-cred-cache:
