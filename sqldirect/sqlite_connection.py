@@ -82,7 +82,7 @@ class SQLiteConnection(Connection):
         cursor = None
         try:
             sql = self._create_statement(sql)
-            cursor = self.cursor()
+            cursor = self._cursor()
             log.info("Execute SQL command: %s", sql)
             cursor.executescript(str(sql))
             if getlastid:

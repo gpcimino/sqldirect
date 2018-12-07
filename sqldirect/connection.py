@@ -12,9 +12,14 @@ class Connection():
         self.conn.close()
         log.debug("Connection closed")
 
-    def cursor(self):
+    def _cursor(self):
         log.debug("Open cursor")
         return self.conn.cursor()
+
+    def prepare(self, args, sql):
+        args = [] if args is None else args
+        sql = self._create_statement(sql)
+        return self._cursor(), sql, args
 
     def _create_statement(self, sql):
         raise NotImplementedError()
@@ -23,9 +28,7 @@ class Connection():
         raise NotImplementedError()
 
     def fetchone(self, sql, mapper=Dictionary(), args=None):
-        args = [] if args is None else args
-        sql = self._create_statement(sql)
-        cursor = self.cursor()
+        cursor, sql, args = self.prepare(args, sql)
         log.info("Execute SQL query: %s . With args: %s", sql, args)
         cursor.execute(str(sql), args)
         record = cursor.fetchone()
@@ -34,22 +37,20 @@ class Connection():
         return mapper.map(record)
 
     def fetchall(self, sql, mapper=Dictionary(), args=None):
-        args = [] if args is None else args
-        sql = self._create_statement(sql)
-        cursor = self.cursor()
+        cursor, sql, args = self.prepare(args, sql)
         log.info("Execute SQL query: %s . With args: %s", sql, args)
         cursor.execute(str(sql), args)
         return [mapper.map(r) for r in cursor.fetchall()]
 
     def execute(self, sql, args=None, getlastid=False):
-        args = [] if args is None else args
-        sql = self._create_statement(sql)
-        cursor = self.cursor()
+        cursor, sql, args = self.prepare(args, sql)
         log.info("Execute SQL command: %s . With args: %s", sql, args)
         cursor.execute(str(sql), args)
         if getlastid:
             return self.get_last_id(cursor)
         return None
+
+
 
     def tables(self, name_filter=None):
         raise NotImplementedError()
