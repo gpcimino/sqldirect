@@ -15,19 +15,13 @@ class SQLiteConnection(Connection):
         )
         self.conn.row_factory = sqlite3.Row
 
+    def create_statement(self, sql):
+        return SQLLiteStatement(sql)
+
     def fetchone(self, sql, mapper=Dictionary(), args=None):
         cursor = None
-        args = [] if args is None else args
-        sql = SQLLiteStatement(sql)
         try:
-            log.debug("Open cursor")
-            cursor = self.cursor()
-            log.info("Execute SQL: %s . With args: %s", sql, args)
-            cursor.execute(str(sql), args)
-            record = cursor.fetchone()
-            if record is None:
-                return None
-            return mapper.map(record)
+            return super().fetchone(sql, mapper=mapper, args=args)
         except sqlite3.Warning as sqlex:
             log.warning(str(sqlex))
             # do not raise sqlex here, it is just a warning, log is enough
@@ -46,14 +40,8 @@ class SQLiteConnection(Connection):
 
     def fetchall(self, sql, mapper=Dictionary(), args=None):
         cursor = None
-        args = [] if args is None else args
-        sql = SQLLiteStatement(sql)
         try:
-            log.debug("Open cursor")
-            cursor = self.cursor()
-            log.info("Execute SQL: %s . With args: %s", sql, args)
-            cursor.execute(str(sql), args)
-            return [mapper.map(r) for r in cursor.fetchall()]
+            return super().fetchall(sql, mapper=mapper, args=args)
         except sqlite3.Warning as sqlex:
             log.warning(str(sqlex))
             # do not raise sqlex here, it is just a warning, log is enough

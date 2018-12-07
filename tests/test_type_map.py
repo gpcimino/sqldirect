@@ -41,7 +41,7 @@ class TestFetchOne(unittest.TestCase):
         self.assertEqual(i, 1)
 
     def test_string(self):
-        s = String(['abc'])
+        s = String().map(['abc'])
         self.assertEqual(s, "abc")
 
     def test_string_name(self):
