@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.com/gpcimino/sqldirect.svg?branch=master)](https://travis-ci.com/gpcimino/sqldirect)
 
+[![BCH compliance](https://bettercodehub.com/edge/badge/gpcimino/sqldirect?branch=master)](https://bettercodehub.com/)
+
 ## Motivation
 
 ## Installation

@@ -31,7 +31,7 @@ class SQLiteConnection(Connection):
         except sqlite3.Warning as sqlex:
             log.warning(str(sqlex))
             # do not raise sqlex here, it is just a warning, log is enough
-        except sqlite3.Error as sqlex:
+        except (sqlite3.Error, sqlite3.DatabaseError) as sqlex:
             log.exception(sqlex)
             raise SQLDirectError(
                 "Cannot execute query {} with args {}".format(
@@ -57,7 +57,7 @@ class SQLiteConnection(Connection):
         except sqlite3.Warning as sqlex:
             log.warning(str(sqlex))
             # do not raise sqlex here, it is just a warning, log is enough
-        except sqlite3.Error as sqlex:
+        except (sqlite3.Error, sqlite3.DatabaseError) as sqlex:
             log.exception(sqlex)
             raise SQLDirectError(
                 "Cannot execute query {} with args {}".format(
