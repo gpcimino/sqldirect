@@ -15,8 +15,9 @@ class SQLiteConnection(Connection):
         )
         self.conn.row_factory = sqlite3.Row
 
-    def fetchone(self, sql, mapper=Dictionary(), args=[]):
+    def fetchone(self, sql, mapper=Dictionary(), args=None):
         cursor = None
+        args = [] if args is None else args
         sql = SQLLiteStatement(sql)
         try:
             log.debug("Open cursor")
@@ -26,25 +27,26 @@ class SQLiteConnection(Connection):
             record = cursor.fetchone()
             if record is None:
                 return None
-            else:
-                return mapper.map(record)
+            return mapper.map(record)
         except sqlite3.Warning as sqlex:
             log.warning(str(sqlex))
             # do not raise sqlex here, it is just a warning, log is enough
         except sqlite3.Error as sqlex:
             log.exception(sqlex)
             raise SQLDirectError(
-                "Cannot execute query %s with args",
-                str(sql),
-                str(args)
+                "Cannot execute query {} with args {}".format(
+                    str(sql),
+                    str(args)
+                )
             ) from sqlex
         finally:
             log.debug("Close cursor")
             if cursor:
                 cursor.close()
 
-    def fetchall(self, sql, mapper=Dictionary(), args=[]):
+    def fetchall(self, sql, mapper=Dictionary(), args=None):
         cursor = None
+        args = [] if args is None else args
         sql = SQLLiteStatement(sql)
         try:
             log.debug("Open cursor")
@@ -58,9 +60,10 @@ class SQLiteConnection(Connection):
         except sqlite3.Error as sqlex:
             log.exception(sqlex)
             raise SQLDirectError(
-                "Cannot execute query %s with args",
-                str(sql),
-                str(args)
+                "Cannot execute query {} with args {}".format(
+                    str(sql),
+                    str(args)
+                )
             ) from sqlex
         finally:
             log.debug("Close cursor")

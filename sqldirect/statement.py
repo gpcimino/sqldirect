@@ -1,4 +1,7 @@
-class Statement(object):
+# pylint: disable-msg=R0903
+# Too few public methods (1/2) (too-few-public-methods)
+
+class Statement():
     def __init__(self, statement, params):
         self.statement = statement
         self._params = params
@@ -10,4 +13,4 @@ class Statement(object):
         return self.inject()
 
     def __repr__(self):
-        self._str__()
+        self.__str__()

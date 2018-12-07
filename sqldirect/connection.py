@@ -4,7 +4,7 @@ from sqldirect.type_map import Dictionary
 log = logging.getLogger("sqldirect")
 
 
-class Connection(object):
+class Connection():
     def __init__(self, conn):
         self.conn = conn
 

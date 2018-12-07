@@ -1,3 +1,6 @@
+# pylint: disable-msg=R0903
+# Too few public methods (1/2) (too-few-public-methods)
+
 import logging
 from sqldirect.statement import Statement
 

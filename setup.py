@@ -24,5 +24,10 @@ setup(
     include_package_data=True,
     zip_safe=False,
     entry_points="",
-    install_requires=requirements
+    install_requires=requirements,
+    extras_require=dict(
+        postgresql=[
+            'psycopg2'
+        ]
+    )
 )

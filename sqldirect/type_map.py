@@ -1,59 +1,56 @@
+# pylint: disable=R0903
+
 from inspect import getfullargspec
 
 from sqldirect.errors import SQLDirectError
 
 
-class Dictionary(object):
+class Dictionary():
     def __init__(self, key_map=None):
         self._key_map = key_map
 
     def map(self, dbrecord):
         if self._key_map is None:
-            # todo: check if dbrecord is already a dict
             return dict(dbrecord)
-        else:
-            # rename keys using key map
-            d = dict(dbrecord)
-            for k in self._key_map:
-                # remove (pop) and add again with the new name
-                d[self._key_map[k]] = d.pop(k)
-            return d
+        # rename keys using key map
+        d = dict(dbrecord)
+        for k in self._key_map:
+            # remove (pop) and add again with the new name
+            d[self._key_map[k]] = d.pop(k)
+        return d
 
 
-class Integer(object):
+class Integer():
     def __init__(self, name=None):
         self._name = name
 
     def map(self, dbrecord):
         if self._name is None:
             return int(dbrecord[0])
-        else:
-            return int(dbrecord[self._name])
+        return int(dbrecord[self._name])
 
 
-class String(object):
+class String():
     def __init__(self, name=None):
         self._name = name
 
     def map(self, dbrecord):
         if self._name is None:
             return str(dbrecord[0])
-        else:
-            return str(dbrecord[self._name])
+        return str(dbrecord[self._name])
 
 
-class Float(object):
+class Float():
     def __init__(self, name=None):
         self._name = name
 
     def map(self, dbrecord):
         if self._name is None:
             return float(dbrecord[0])
-        else:
-            return float(dbrecord[self._name])
+        return float(dbrecord[self._name])
 
 
-class Type(object):
+class Type():
     def __init__(self, type_, extra_fields=None):
         self._type = type_
         self._extra_fields = extra_fields
@@ -62,6 +59,8 @@ class Type(object):
         return self._type.__name__
 
     def map(self, dbrecord):
+        # pylint: disable-msg=R0911
+        # Too many return statements (7/6) (too-many-return-statements)
         if self._extra_fields is not None:
             # when support of py3.4 will be dropped, use the one-line below to merge 2 dict
             # dbrecord = {**dbrecord, **self._extra_fields}
@@ -71,22 +70,21 @@ class Type(object):
         signature = getfullargspec(self._type.__init__)
         if len(signature.args) == 2:
             return self._create1(dbrecord, signature.args)
-        elif len(signature.args) == 3:
+        if len(signature.args) == 3:
             return self._create2(dbrecord, signature.args)
-        elif len(signature.args) == 4:
+        if len(signature.args) == 4:
             return self._create3(dbrecord, signature.args)
-        elif len(signature.args) == 5:
+        if len(signature.args) == 5:
             return self._create4(dbrecord, signature.args)
-        elif len(signature.args) == 6:
+        if len(signature.args) == 6:
             return self._create5(dbrecord, signature.args)
-        elif len(signature.args) == 7:
+        if len(signature.args) == 7:
             return self._create6(dbrecord, signature.args)
-        elif len(signature.args) == 8:
+        if len(signature.args) == 8:
             return self._create7(dbrecord, signature.args)
-        else:
-            raise SQLDirectError(
-                "Cannot create object with more than 8 args in ctor"
-            )
+        raise SQLDirectError(
+            "Cannot create object with more than 8 args in ctor"
+        )
 
     def _create1(self, dbrecord, ctor_args):
         return self._type(dbrecord[ctor_args[1]])
@@ -143,7 +141,7 @@ class Type(object):
         )
 
 
-class Function(object):
+class Function():
     def __init__(self, func):
         self._func = func
 
@@ -151,7 +149,7 @@ class Function(object):
         return self._func(dbrecord)
 
 
-class Composite(object):
+class Composite():
     def __init__(self, types, relation=None):
         self._types = types if isinstance(types, list) else [types]
         if relation is not None:
@@ -165,11 +163,10 @@ class Composite(object):
         mapped = [t.map(dbrecord) for t in self._types]
         if self._relation is not None:
             return self._relation(*mapped)
-        else:
-            return mapped
+        return mapped
 
 
-class Polymorphic(object):
+class Polymorphic():
     def __init__(self, types, type_switch):
         self._type_switch = type_switch
         self._objects = {t.typename(): t for t in types}
