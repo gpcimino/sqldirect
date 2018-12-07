@@ -22,7 +22,7 @@ class TestCommands(unittest.TestCase):
         self.conn.execute("CREATE TABLE test (id serial PRIMARY KEY, num integer, data varchar);")
         self.assertTrue(self.conn.table_exists('test'))
 
-    def test_multiple_statement(self):
+    def test_sql_script(self):
         s = """
                 CREATE TABLE test (id serial PRIMARY KEY, num integer, data varchar);
                 CREATE UNIQUE INDEX IF NOT EXISTS idx_test_data ON test (data);
@@ -51,6 +51,32 @@ class TestCommands(unittest.TestCase):
         self.conn.execute("INSERT INTO test (num, data) VALUES ({par}, {par})", args=[200, "abc'def"])
         id_field = self.conn.fetchone("SELECT id FROM test WHERE num=200", Integer('id'))
         self.assertTrue(2, id_field)
+
+    def test_delete(self):
+        self.conn.execute("CREATE TABLE test (id serial PRIMARY KEY, num integer, data varchar)")
+        self.conn.execute(
+            "INSERT INTO test (num, data) VALUES ({par}, {par}) {return_id}",
+            args=[100, "abc'def"]
+        )
+        self.conn.execute("DELETE FROM test")
+        self.assertEqual(0, self.conn.fetchone("SELECT COUNT(*) FROM test", Integer()))
+
+    def test_delete_last_id(self):
+        self.conn.execute(
+            "CREATE TABLE test (id serial PRIMARY KEY, num integer, data varchar)"
+        )
+
+        last_id = self.conn.execute(
+            "INSERT INTO test (num, data) VALUES ({par}, {par}) {return_id}",
+            args=[100, "abc'def"]
+        )
+
+        deleted_id = self.conn.execute(
+            "DELETE FROM test WHERE num={par} {return_id}",
+            args=[last_id]
+        )
+
+        self.assertTrue(100, deleted_id)
 
     def tearDown(self):
         logging.disable(logging.NOTSET)
