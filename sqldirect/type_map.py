@@ -68,78 +68,8 @@ class Type():
             tmp.update(self._extra_fields)
             dbrecord = tmp
         signature = getfullargspec(self._type.__init__)
-        if len(signature.args) == 2:
-            return self._create1(dbrecord, signature.args)
-        if len(signature.args) == 3:
-            return self._create2(dbrecord, signature.args)
-        if len(signature.args) == 4:
-            return self._create3(dbrecord, signature.args)
-        if len(signature.args) == 5:
-            return self._create4(dbrecord, signature.args)
-        if len(signature.args) == 6:
-            return self._create5(dbrecord, signature.args)
-        if len(signature.args) == 7:
-            return self._create6(dbrecord, signature.args)
-        if len(signature.args) == 8:
-            return self._create7(dbrecord, signature.args)
-        raise SQLDirectError(
-            "Cannot create object with more than 8 args in ctor"
-        )
-
-    def _create1(self, dbrecord, ctor_args):
-        return self._type(dbrecord[ctor_args[1]])
-
-    def _create2(self, dbrecord, ctor_args):
-        return self._type(
-            dbrecord[ctor_args[1]],
-            dbrecord[ctor_args[2]]
-        )
-
-    def _create3(self, dbrecord, ctor_args):
-        return self._type(
-            dbrecord[ctor_args[1]],
-            dbrecord[ctor_args[2]],
-            dbrecord[ctor_args[3]]
-        )
-
-    def _create4(self, dbrecord, ctor_args):
-        return self._type(
-            dbrecord[ctor_args[1]],
-            dbrecord[ctor_args[2]],
-            dbrecord[ctor_args[3]],
-            dbrecord[ctor_args[4]]
-        )
-
-    def _create5(self, dbrecord, ctor_args):
-        return self._type(
-            dbrecord[ctor_args[1]],
-            dbrecord[ctor_args[2]],
-            dbrecord[ctor_args[3]],
-            dbrecord[ctor_args[4]],
-            dbrecord[ctor_args[5]]
-        )
-
-    def _create6(self, dbrecord, ctor_args):
-        return self._type(
-            dbrecord[ctor_args[1]],
-            dbrecord[ctor_args[2]],
-            dbrecord[ctor_args[3]],
-            dbrecord[ctor_args[4]],
-            dbrecord[ctor_args[5]],
-            dbrecord[ctor_args[6]]
-        )
-
-    def _create7(self, dbrecord, ctor_args):
-        return self._type(
-            dbrecord[ctor_args[1]],
-            dbrecord[ctor_args[2]],
-            dbrecord[ctor_args[3]],
-            dbrecord[ctor_args[4]],
-            dbrecord[ctor_args[5]],
-            dbrecord[ctor_args[6]],
-            dbrecord[ctor_args[7]]
-        )
-
+        ctor_args = [dbrecord[a] for a in signature.args[1:]]
+        return self._type(*ctor_args)
 
 class Function():
     def __init__(self, func):
