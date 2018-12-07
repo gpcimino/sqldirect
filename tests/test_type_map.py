@@ -1,7 +1,5 @@
 import unittest
 import os
-import logging
-import sys
 from dotenv import load_dotenv, find_dotenv
 
 from sqldirect import SQLiteConnection

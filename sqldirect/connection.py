@@ -50,8 +50,6 @@ class Connection():
             return self.get_last_id(cursor)
         return None
 
-
-
     def tables(self, name_filter=None):
         raise NotImplementedError()
 

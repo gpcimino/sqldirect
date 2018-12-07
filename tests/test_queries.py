@@ -1,11 +1,9 @@
 import unittest
 import os
 import logging
-import sys
 from dotenv import load_dotenv, find_dotenv
 
 from sqldirect import SQLiteConnection as DbConnection
-from sqldirect import Dictionary
 from sqldirect import SQLDirectError
 
 class TestFetch(unittest.TestCase):

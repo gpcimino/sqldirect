@@ -5,8 +5,8 @@ import sys
 from dotenv import load_dotenv, find_dotenv
 
 from sqldirect import SQLiteConnection as DbConnection
-from sqldirect import Dictionary, String, Integer
-from sqldirect import SQLDirectError
+from sqldirect import String, Integer
+
 
 class TestCommands(unittest.TestCase):
     @classmethod
