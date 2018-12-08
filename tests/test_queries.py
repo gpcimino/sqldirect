@@ -23,7 +23,7 @@ class TestFetch(unittest.TestCase):
 
     def test_fetchone_wrong_sql(self):
         with self.assertRaises(SQLDirectError):
-            reocord = self.conn.fetchone(
+            record = self.conn.fetchone(
                 "SELECT all your base are belong to us",
             )
 

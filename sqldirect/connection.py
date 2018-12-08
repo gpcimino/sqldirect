@@ -21,6 +21,11 @@ class Connection():
         sql = self._create_statement(sql)
         return self._cursor(), sql, args
 
+    def cleanup(self, cursor):
+        log.debug("Close cursor")
+        if cursor:
+            cursor.close()
+
     def _create_statement(self, sql):
         raise NotImplementedError()
 
@@ -28,13 +33,17 @@ class Connection():
         raise NotImplementedError()
 
     def fetchone(self, sql, mapper=Dictionary(), args=None):
-        cursor, sql, args = self.prepare(args, sql)
-        log.info("Execute SQL query: %s . With args: %s", sql, args)
-        cursor.execute(str(sql), args)
-        record = cursor.fetchone()
-        if record is None:
-            return None
-        return mapper.map(record)
+        cursor = None
+        try:
+            cursor, sql, args = self.prepare(args, sql)
+            log.info("Execute SQL query: %s . With args: %s", sql, args)
+            cursor.execute(str(sql), args)
+            record = cursor.fetchone()
+            if record is None:
+                return None
+            return mapper.map(record)
+        finally:
+            self.cleanup(cursor)
 
     def fetchall(self, sql, mapper=Dictionary(), args=None):
         cursor, sql, args = self.prepare(args, sql)
