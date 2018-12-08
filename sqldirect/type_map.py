@@ -68,6 +68,8 @@ class Type():
             tmp.update(self._extra_fields)
             dbrecord = tmp
         signature = getfullargspec(self._type.__init__)
+        # get the fields from the record accordin to the name parameters of the ctor
+        # excluding the first (self) [1:]
         ctor_args = [dbrecord[a] for a in signature.args[1:]]
         return self._type(*ctor_args)
 
