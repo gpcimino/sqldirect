@@ -19,7 +19,7 @@ class TestCommands(unittest.TestCase):
         logging.disable(logging.CRITICAL)
 
     def test_create_table(self):
-        self.conn.execute("CREATE TABLE test (id serial PRIMARY KEY, num integer, data varchar);")
+        self.conn.execute("CREATE TABLE test (id serial PRIMARY KEY, num integer, data varchar)")
         self.assertTrue(self.conn.table_exists('test'))
 
     def test_sql_script(self):
@@ -31,7 +31,7 @@ class TestCommands(unittest.TestCase):
         self.conn.execute(s)
 
         data_field = self.conn.fetchone(
-            "SELECT data FROM test WHERE num=100;",
+            "SELECT data FROM test WHERE num=100",
             String('data')
         )
         self.assertTrue('test data', data_field)
@@ -79,6 +79,7 @@ class TestCommands(unittest.TestCase):
         self.assertTrue(100, deleted_id)
 
     def tearDown(self):
+        #self.conn.execute("DROP TABLE test")
         logging.disable(logging.NOTSET)
         self.conn.close()
 
