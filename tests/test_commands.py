@@ -19,7 +19,7 @@ class TestCommands(unittest.TestCase):
         logging.disable(logging.CRITICAL)
 
     def test_create_table(self):
-        self.conn.execute("CREATE TEMPORARY TABLE test (id serial PRIMARY KEY, num integer, data varchar)")
+        self.conn.execute("CREATE TABLE test (id serial PRIMARY KEY, num integer, data varchar)")
         self.assertTrue(self.conn.table_exists('test'))
 
     def test_sql_script(self):
@@ -79,7 +79,7 @@ class TestCommands(unittest.TestCase):
         self.assertTrue(100, deleted_id)
 
     def tearDown(self):
-        self.conn.execute("DROP TABLE test")
+        self.conn.execute("DROP TABLE IF EXISTS test")
         logging.disable(logging.NOTSET)
         self.conn.close()
 
