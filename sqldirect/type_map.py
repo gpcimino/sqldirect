@@ -62,11 +62,7 @@ class Type():
         # pylint: disable-msg=R0911
         # Too many return statements (7/6) (too-many-return-statements)
         if self._extra_fields is not None:
-            # when support of py3.4 will be dropped, use the one-line below to merge 2 dict
-            # dbrecord = {**dbrecord, **self._extra_fields}
-            tmp = dict(dbrecord).copy()
-            tmp.update(self._extra_fields)
-            dbrecord = tmp
+            dbrecord = {**dbrecord, **self._extra_fields}
         signature = getfullargspec(self._type.__init__)
         # get the fields from the record accordin to the name parameters of the ctor
         # excluding the first (self) [1:]

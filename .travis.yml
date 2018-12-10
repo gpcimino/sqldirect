@@ -1,8 +1,9 @@
 language: python
+dist: xenial
 python:
-  - "3.4"
   - "3.5"
   - "3.6"
+  - "3.7"
 env:
   - CONNECTION_STRING=:memory:
 # command to install dependencies
@@ -11,3 +12,8 @@ install:
 # command to run tests
 script:
   - python -m unittest discover -s ./tests/
+notifications:
+  email:
+    on_success: never
+    on_failure: change
+

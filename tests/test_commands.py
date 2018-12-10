@@ -17,9 +17,10 @@ class TestCommands(unittest.TestCase):
     def setUp(self):
         self.conn = DbConnection(os.getenv("CONNECTION_STRING"))
         logging.disable(logging.CRITICAL)
+        self.conn.execute("DROP TABLE IF EXISTS test")
 
     def test_create_table(self):
-        self.conn.execute("CREATE TABLE test (id serial PRIMARY KEY, num integer, data varchar);")
+        self.conn.execute("CREATE TABLE test (id serial PRIMARY KEY, num integer, data varchar)")
         self.assertTrue(self.conn.table_exists('test'))
 
     def test_sql_script(self):
@@ -31,7 +32,7 @@ class TestCommands(unittest.TestCase):
         self.conn.execute(s)
 
         data_field = self.conn.fetchone(
-            "SELECT data FROM test WHERE num=100;",
+            "SELECT data FROM test WHERE num=100",
             String('data')
         )
         self.assertTrue('test data', data_field)
@@ -79,6 +80,7 @@ class TestCommands(unittest.TestCase):
         self.assertTrue(100, deleted_id)
 
     def tearDown(self):
+        self.conn.execute("DROP TABLE IF EXISTS test")
         logging.disable(logging.NOTSET)
         self.conn.close()
 
