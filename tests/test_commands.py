@@ -79,7 +79,7 @@ class TestCommands(unittest.TestCase):
         self.assertTrue(100, deleted_id)
 
     def tearDown(self):
-        #self.conn.execute("DROP TABLE test")
+        self.conn.execute("DROP TABLE test")
         logging.disable(logging.NOTSET)
         self.conn.close()
 
