@@ -17,6 +17,7 @@ class TestCommands(unittest.TestCase):
     def setUp(self):
         self.conn = DbConnection(os.getenv("CONNECTION_STRING"))
         logging.disable(logging.CRITICAL)
+        self.conn.execute("DROP TABLE IF EXISTS test")
 
     def test_create_table(self):
         self.conn.execute("CREATE TABLE test (id serial PRIMARY KEY, num integer, data varchar)")
